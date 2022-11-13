@@ -2,12 +2,14 @@
 # with some functions borrowed from https://github.com/SeanNaren/deepspeech.pytorch
 import csv
 import json
-import torchaudio
+import random
+
 import numpy as np
 import torch
 import torch.nn.functional
+import torchaudio
 from torch.utils.data import Dataset
-import random
+
 
 def make_index_dict(label_csv):
     index_lookup = {}
@@ -19,6 +21,7 @@ def make_index_dict(label_csv):
             line_count += 1
     return index_lookup
 
+
 def make_name_dict(label_csv):
     name_lookup = {}
     with open(label_csv, 'r') as f:
@@ -29,6 +32,7 @@ def make_name_dict(label_csv):
             line_count += 1
     return name_lookup
 
+
 def lookup_list(index_list, label_csv):
     label_list = []
     table = make_name_dict(label_csv)
@@ -36,13 +40,15 @@ def lookup_list(index_list, label_csv):
         label_list.append(table[item])
     return label_list
 
-def preemphasis(signal,coeff=0.97):
+
+def preemphasis(signal, coeff=0.97):
     """perform preemphasis on the input signal.
     :param signal: The signal to filter.
     :param coeff: The preemphasis coefficient. 0 is none, default 0.97.
     :returns: the filtered signal.
     """
-    return np.append(signal[0],signal[1:]-coeff*signal[:-1])
+    return np.append(signal[0], signal[1:] - coeff * signal[:-1])
+
 
 class AudiosetDataset(Dataset):
     def __init__(self, dataset_json_file, audio_conf, label_csv=None):
@@ -61,7 +67,8 @@ class AudiosetDataset(Dataset):
         self.melbins = self.audio_conf.get('num_mel_bins')
         self.freqm = self.audio_conf.get('freqm')
         self.timem = self.audio_conf.get('timem')
-        print('now using following mask: {:d} freq, {:d} time'.format(self.audio_conf.get('freqm'), self.audio_conf.get('timem')))
+        print('now using following mask: {:d} freq, {:d} time'.format(self.audio_conf.get('freqm'),
+                                                                      self.audio_conf.get('timem')))
         self.mixup = self.audio_conf.get('mixup')
         print('now using mix-up with rate {:f}'.format(self.mixup))
         self.dataset = self.audio_conf.get('dataset')
@@ -75,10 +82,11 @@ class AudiosetDataset(Dataset):
         if self.skip_norm:
             print('now skip normalization (use it ONLY when you are computing the normalization stats).')
         else:
-            print('use dataset mean {:.3f} and std {:.3f} to normalize the input.'.format(self.norm_mean, self.norm_std))
+            print(
+                'use dataset mean {:.3f} and std {:.3f} to normalize the input.'.format(self.norm_mean, self.norm_std))
         # if add noise for data augmentation
         self.noise = self.audio_conf.get('noise')
-        if self.noise == True:
+        if self.noise:
             print('now use noise augmentation')
 
         self.index_dict = make_index_dict(label_csv)
@@ -87,7 +95,7 @@ class AudiosetDataset(Dataset):
 
     def _wav2fbank(self, filename, filename2=None):
         # mixup
-        if filename2 == None:
+        if filename2 is None:
             waveform, sr = torchaudio.load(filename)
             waveform = waveform - waveform.mean()
         # mixup
@@ -109,7 +117,7 @@ class AudiosetDataset(Dataset):
                     waveform2 = waveform2[0, 0:waveform1.shape[1]]
 
             # sample lambda from uniform distribution
-            #mix_lambda = random.random()
+            # mix_lambda = random.random()
             # sample lambda from beta distribtion
             mix_lambda = np.random.beta(10, 10)
 
@@ -117,7 +125,8 @@ class AudiosetDataset(Dataset):
             waveform = mix_waveform - mix_waveform.mean()
 
         fbank = torchaudio.compliance.kaldi.fbank(waveform, htk_compat=True, sample_frequency=sr, use_energy=False,
-                                                  window_type='hanning', num_mel_bins=self.melbins, dither=0.0, frame_shift=10)
+                                                  window_type='hanning', num_mel_bins=self.melbins, dither=0.0,
+                                                  frame_shift=10)
 
         target_length = self.audio_conf.get('target_length')
         n_frames = fbank.shape[0]
@@ -131,7 +140,7 @@ class AudiosetDataset(Dataset):
         elif p < 0:
             fbank = fbank[0:target_length, :]
 
-        if filename2 == None:
+        if filename2 is None:
             return fbank, 0
         else:
             return fbank, mix_lambda
@@ -150,7 +159,7 @@ class AudiosetDataset(Dataset):
             # sample the other sample from the multinomial distribution, will make the performance worse
             # mix_sample_idx = np.random.choice(len(self.data), p=self.sample_weight_file)
             # sample the other sample from the uniform distribution
-            mix_sample_idx = random.randint(0, len(self.data)-1)
+            mix_sample_idx = random.randint(0, len(self.data) - 1)
             mix_datum = self.data[mix_sample_idx]
             # get the mixed fbank
             fbank, mix_lambda = self._wav2fbank(datum['wav'], mix_datum['wav'])
@@ -161,7 +170,7 @@ class AudiosetDataset(Dataset):
                 label_indices[int(self.index_dict[label_str])] += mix_lambda
             # add sample 2 labels
             for label_str in mix_datum['labels'].split(','):
-                label_indices[int(self.index_dict[label_str])] += (1.0-mix_lambda)
+                label_indices[int(self.index_dict[label_str])] += (1.0 - mix_lambda)
             label_indices = torch.FloatTensor(label_indices)
         # if not do mixup
         else:
@@ -189,12 +198,12 @@ class AudiosetDataset(Dataset):
 
         # normalize the input for both training and test
         if not self.skip_norm:
-            fbank = (fbank - self.norm_mean) / (self.norm_std)
+            fbank = (fbank - self.norm_mean) / self.norm_std
         # skip normalization the input if you are trying to get the normalization stats.
         else:
             pass
 
-        if self.noise == True:
+        if self.noise:
             fbank = fbank + torch.rand(fbank.shape[0], fbank.shape[1]) * np.random.rand() / 10
             fbank = torch.roll(fbank, np.random.randint(-10, 10), 0)
 
