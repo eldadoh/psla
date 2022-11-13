@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 12/24/20 2:34 AM
-# @Author  : Yuan Gong
-# @Affiliation  : Massachusetts Institute of Technology
-# @Email   : yuangong@mit.edu
-# @File    : merge_type_1_2.py
-
 # merge label enhancement 1 and label enhancement 2.
 
 import json

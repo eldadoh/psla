@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 4/27/21 3:21 AM
-# @Author  : Yuan Gong
-# @Affiliation  : Massachusetts Institute of Technology
-# @Email   : yuangong@mit.edu
-# @File    : prep_fsd.py
-
 import numpy as np
 import json
 import os

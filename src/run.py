@@ -1,5 +1,3 @@
-# Yuan Gong, modified from:
-# Author: David Harwath
 import argparse
 import os
 import pickle
