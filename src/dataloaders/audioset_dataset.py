@@ -1,5 +1,4 @@
-# Author: David Harwath
-# with some functions borrowed from https://github.com/SeanNaren/deepspeech.pytorch
+# some functions borrowed from https://github.com/SeanNaren/deepspeech.pytorch
 import csv
 import json
 import random

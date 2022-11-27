@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 12/23/20 2:02 PM
-# @Author  : Yuan Gong
-# @Affiliation  : Massachusetts Institute of Technology
-# @Email   : yuangong@mit.edu
-# @File    : fix_type1.py
-
 # enhance the label based on the model prediction, fixing the TYPE-I error.
 # TYPE-I error: an audio clip is labeled with a parent class,
 # but not also labeled as a child class when it does in fact

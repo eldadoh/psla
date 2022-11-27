@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 10/28/21 1:55 PM
-# @Author  : Yuan Gong
-# @Affiliation  : Massachusetts Institute of Technology
-# @Email   : yuangong@mit.edu
-# @File    : weight_averaging.py
-
 import os, sys, argparse
 parentdir = str(os.path.abspath(os.path.join(__file__ ,"../..")))
 sys.path.append(parentdir)

@@ -1,10 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 5/24/21 12:55 AM
-# @Author  : Yuan Gong
-# @Affiliation  : Massachusetts Institute of Technology
-# @Email   : yuangong@mit.edu
-# @File    : check_label_error.py
-
 # This is an example (male, female, and kid speech classes) showing the label error in the AudioSet.
 
 import json
