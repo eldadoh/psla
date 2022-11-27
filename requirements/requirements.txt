@@ -1,0 +1,16 @@
+llvmlite==0.36.0
+matplotlib==3.4.2
+numba==0.53.1
+scikit-learn==0.24.2
+sklearn==0.0
+torch==1.6.0
+torchaudio==0.6.0
+torchvision==0.7.0
+wget==3.2
+zipp==3.4.1
+efficientnet-lite-pytorch==0.1.0
+efficientnet-pytorch==0.7.0
+# fairseq
+# -e git+https://github.com/pytorch/fairseq@bcc81f6d5291c3996c8b2472282458dead46343f#egg=fairseq
+# if above ^^ doesnt work: sudo apt-get install python3.x-dev
+# pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116 --force-reinstall --no-cache-dir
